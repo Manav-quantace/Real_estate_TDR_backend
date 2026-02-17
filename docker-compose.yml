@@ -1,0 +1,38 @@
+services:
+  db:
+    image: postgres:15
+    container_name: retdr_postgres
+    environment:
+      POSTGRES_DB: retdr
+      POSTGRES_USER: retdr_user
+      POSTGRES_PASSWORD: retdr_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - retdr_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U retdr_user"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build: .
+    container_name: retdr_api
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql+psycopg2://retdr_user:retdr_pass@db:5432/retdr
+      ENV: development
+    ports:
+      - "8000:8000"
+    command: >
+      sh -c "
+      alembic upgrade head &&
+      python app/seed.py &&
+      uvicorn app.main:create_app --host 0.0.0.0 --port 8000
+      "
+
+volumes:
+  retdr_pgdata:

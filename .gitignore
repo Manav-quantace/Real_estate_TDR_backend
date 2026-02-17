@@ -1,0 +1,16 @@
+# Secrets
+.env
+.env.*
+*.pem
+*.key
+
+# Python
+__pycache__/
+*.pyc
+
+# Node / Next
+node_modules/
+.next/
+
+# Alembic cache
+alembic/versions/__pycache__/
