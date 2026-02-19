@@ -200,7 +200,7 @@ async def list_ask_bids_for_authority(
             AskBid.t == t,
         )
         .order_by(AskBid.ask_price_per_unit_inr.asc().nullslast())
-        .all()
+        .all() 
     )
 
     response = {
